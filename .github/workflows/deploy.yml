@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: us-east-1
+      ECR_REPO: eks-repo-1234
+      EKS_CLUSTER: eks-prod-1234
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::182889640030:role/github-actions-role
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Verify identity
+        run: aws sts get-caller-identity
+
+      - name: Read secrets from Secrets Manager
+        run: |
+          SECRET=$(aws secretsmanager get-secret-value \
+            --secret-id xi/eks \
+            --query SecretString \
+            --output text)
+
+          echo "EKS_CLUSTER=$(echo $SECRET | jq -r .EKS_CLUSTER)" >> $GITHUB_ENV
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          ECR_REGISTRY=$(aws sts get-caller-identity --query Account --output text).dkr.ecr.${AWS_REGION}.amazonaws.com
+          docker build -t $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG ./app
+          docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region $AWS_REGION \
+            --name $EKS_CLUSTER
+
