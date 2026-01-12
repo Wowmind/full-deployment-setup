@@ -130,7 +130,7 @@ resource "aws_secretsmanager_secret" "xi" {
 resource "aws_secretsmanager_secret_version" "xii" {
   secret_id = aws_secretsmanager_secret.xi.id
   secret_string = jsonencode({
-    EKS_CLUSTER = "prod-eks"
+    EKS_CLUSTER = "eks-prod-1234"
   })
 }
 
