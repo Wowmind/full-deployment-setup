@@ -148,7 +148,7 @@ resource "aws_iam_role_policy" "allow_secret_xii_eks" {
     Statement = [{
       Effect = "Allow"
       Action = ["secretsmanager:GetSecretValue","secretsmanager:DescribeSecret"]
-      Resource = "arn:aws:secretsmanager:us-east-1:182889640030:secret:xii/eks-HwxIMq"
+      Resource = "arn:aws:secretsmanager:us-east-1:182889640030:secret:xiii/eks-HwxIMq"
     }]
   })
 }
