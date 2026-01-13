@@ -33,7 +33,7 @@ jobs:
       - name: Read secrets from Secrets Manager
         run: |
           SECRET=$(aws secretsmanager get-secret-value \
-            --secret-id xi/eks \
+            --secret-id xiii/eks \
             --query SecretString \
             --output text)
 

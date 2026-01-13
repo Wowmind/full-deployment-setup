@@ -64,11 +64,11 @@ resource "aws_iam_role" "github_actions" {
     Version = "2012-10-17"
     Statement = [{
       Effect = "Allow"
-      Principal = { Federated = "arn:aws:iam::182889640030:oidc-provider/token.actions.githubusercontent.com" }
+      Principal = {  Federated = "arn:aws:iam::182889640030:oidc-provider/token.actions.githubusercontent.com" }
       Action = "sts:AssumeRoleWithWebIdentity"
       Condition = {
         StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:Wowmind/agrocd-deployment-github-action-aws:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = "repo:Wowmind/full-deployment-setup-aws:ref:refs/heads/main"
         }
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
@@ -123,12 +123,12 @@ resource "aws_iam_role_policy_attachment" "github_ci_attach" {
   policy_arn = aws_iam_policy.github_ci_policy.arn
 }
 
-resource "aws_secretsmanager_secret" "xi" {
-  name = "xi/eks"
+resource "aws_secretsmanager_secret" "xiii" {
+  name = "xiii/eks"
 }
 
-resource "aws_secretsmanager_secret_version" "xii" {
-  secret_id = aws_secretsmanager_secret.xi.id
+resource "aws_secretsmanager_secret_version" "xiii" {
+  secret_id = aws_secretsmanager_secret.xiii.id
   secret_string = jsonencode({
     EKS_CLUSTER = "eks-prod-1234"
   })
