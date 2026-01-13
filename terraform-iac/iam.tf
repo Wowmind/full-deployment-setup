@@ -125,7 +125,8 @@ resource "aws_iam_policy" "github_ci_policy" {
           "secretsmanager:GetSecretValue",
           "secretsmanager:DescribeSecret"
         ]
-        Resource = "arn:aws:secretsmanager:us-east-1:182889640030:secret:full-deployment-setup-aws/*"
+        Resource = "arn:aws:secretsmanager:us-east-1:182889640030:secret:weee/eks*"
+
       }
     ]
   })
