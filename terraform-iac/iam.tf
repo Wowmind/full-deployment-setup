@@ -45,12 +45,17 @@ resource "aws_iam_role_policy_attachment" "node_policies" {
   role       = aws_iam_role.eks_node_role.name
   policy_arn = each.value
 }
-
+/*
 resource "aws_iam_openid_connect_provider" "github" {
   url = "https://token.actions.githubusercontent.com"
+
   client_id_list = ["sts.amazonaws.com"]
-  thumbprint_list = ["1c58a3a8518e8759bf075b76b750d4f2df264fcd"]
+
+  thumbprint_list = [
+    "1c58a3a8518e8759bf075b76b750d4f2df264fcd"
+  ]
 }
+*/
 
 
 resource "aws_iam_role" "github_actions" {
@@ -60,10 +65,10 @@ resource "aws_iam_role" "github_actions" {
     Version = "2012-10-17"
     Statement = [{
       Effect = "Allow"
-      Principal = {
-        Federated = aws_iam_openid_connect_provider.github.arn
-      }
       Action = "sts:AssumeRoleWithWebIdentity"
+      Principal = {
+        Federated = data.aws_iam_openid_connect_provider.github.arn
+      }
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
