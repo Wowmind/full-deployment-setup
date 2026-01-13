@@ -68,7 +68,7 @@ resource "aws_iam_role" "github_actions" {
       Action = "sts:AssumeRoleWithWebIdentity"
       Condition = {
         StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:Wowmind/full-deployment-setup-aws:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = "repo:Wowmind/full-deployment-setup-aws:*"
         }
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
@@ -139,7 +139,7 @@ resource "aws_secretsmanager_secret_version" "xiii" {
 # terraform import aws_secretsmanager_secret.cii arn:aws:secretsmanager:us-east-1:182889640030:secret:cii/eks-HwxIMq
 # terraform import aws_iam_openid_connect_provider.github arn:aws:iam::182889640030:oidc-provider/token.actions.githubusercontent.com
 
-resource "aws_iam_role_policy" "allow_secret_xii_eks" {
+resource "aws_iam_role_policy" "allow_secret_xiii_eks" {
   name = "AllowSecrets_XII_EKS"
   role = aws_iam_role.github_actions.name
 
