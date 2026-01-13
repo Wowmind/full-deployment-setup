@@ -89,50 +89,60 @@ resource "aws_iam_role_policy_attachment" "github_actions_s3" {
 
 #IAM Policy EKS+ECR  + Secret Manager 
 resource "aws_iam_policy" "github_ci_policy" {
-  name = "github-ci-policy"
+  name = "github-ci-new-project-policy"
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
 
-      # ECR (build & push)
+      # ECR
       {
         Effect = "Allow"
         Action = [
           "ecr:GetAuthorizationToken",
           "ecr:BatchCheckLayerAvailability",
-          "ecr:CompleteLayerUpload",
-          "ecr:UploadLayerPart",
           "ecr:InitiateLayerUpload",
-          "ecr:PutImage",
-          "ecr:DescribeRepositories"
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:PutImage"
         ]
         Resource = "*"
       },
 
-      # EKS (update kubeconfig)
+      # EKS
       {
         Effect = "Allow"
         Action = [
           "eks:DescribeCluster"
         ]
         Resource = "*"
+      },
+
+      # Secrets Manager
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = "arn:aws:secretsmanager:us-east-1:182889640030:secret:full-deployment-setup-aws/*"
       }
     ]
   })
-} 
+}
+
 
 resource "aws_iam_role_policy_attachment" "github_ci_attach" {
   role       = aws_iam_role.github_actions.name
   policy_arn = aws_iam_policy.github_ci_policy.arn
 }
 
-resource "aws_secretsmanager_secret" "xiii" {
-  name = "xiii/eks"
+resource "aws_secretsmanager_secret" "weee" {
+  name = "weee/eks"
 }
 
-resource "aws_secretsmanager_secret_version" "xiii" {
-  secret_id = aws_secretsmanager_secret.xiii.id
+resource "aws_secretsmanager_secret_version" "weee" {
+  secret_id = aws_secretsmanager_secret.weee.id
   secret_string = jsonencode({
     EKS_CLUSTER = "eks-prod-1234"
   })
@@ -152,7 +162,7 @@ resource "aws_iam_role_policy" "allow_secret_xiii_eks" {
     Statement = [{
       Effect = "Allow"
       Action = ["secretsmanager:GetSecretValue","secretsmanager:DescribeSecret"]
-      Resource = "arn:aws:secretsmanager:us-east-1:182889640030:secret:xiii/eks-HwxIMq"
+      Resource = "arn:aws:secretsmanager:us-east-1:182889640030:secret:weee/eks-HwxIMq"
     }]
   })
 }
